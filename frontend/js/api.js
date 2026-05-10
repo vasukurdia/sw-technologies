@@ -1,9 +1,4 @@
-/* =============================================
-   SW Technologies — API Config
-   Change API_BASE_URL after deploying backend
-============================================= */
-
-const API_BASE_URL = 'https://sw-technologies-api.onrender.com'; // 👈 Render deploy ke baad yahan URL paste karo
+const API_BASE_URL = 'https://sw-technologies.onrender.com/'; // 👈 Render deploy ke baad yahan URL paste karo
 
 const api = {
   contact:             `${API_BASE_URL}/api/contact`,
