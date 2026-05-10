@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — SW Technologies</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .auth-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 60px;
+      background: var(--off-white);
+    }
+    .auth-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+    }
+    .auth-card .auth-logo {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .auth-card h2 { font-size: 1.7rem; text-align: center; margin-bottom: 0.4rem; }
+    .auth-card .auth-sub { text-align: center; color: var(--slate-light); font-size: 0.93rem; margin-bottom: 2rem; }
+    .auth-footer { text-align: center; margin-top: 1.2rem; font-size: 0.9rem; color: var(--slate-light); }
+    .auth-footer a { color: var(--blue); font-weight: 600; }
+    .auth-api-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .auth-api-success {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #16a34a;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">SW<span>.</span>Technologies</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div id="navAuthLinks" class="nav-auth-links"></div>
+    <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <section class="auth-section">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <a href="index.html" class="nav-logo" style="font-size:1.6rem;">SW<span>.</span>Technologies</a>
+      </div>
+      <h2>Welcome Back</h2>
+      <p class="auth-sub">Login to your account</p>
+
+      <div id="apiError" class="auth-api-error"></div>
+      <div id="apiSuccess" class="auth-api-success"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">Email Address <span style="color:#ef4444">*</span></label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+          <span class="error-msg"></span>
+        </div>
+        <div class="form-group">
+          <label for="password">Password <span style="color:#ef4444">*</span></label>
+          <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="error-msg"></span>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;">
+          <i class="fas fa-right-to-bracket"></i> Login
+        </button>
+      </form>
+
+      <p class="auth-footer">Don't have an account? <a href="register.html">Register here</a></p>
+    </div>
+  </section>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (localStorage.getItem('swt_token')) window.location.href = 'index.html';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('apiError');
+      const sucBox = document.getElementById('apiSuccess');
+      errBox.style.display = 'none';
+      sucBox.style.display = 'none';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Frontend validation
+      let valid = true;
+      const emailGroup = document.getElementById('email').closest('.form-group');
+      const passGroup = document.getElementById('password').closest('.form-group');
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailGroup.classList.add('error');
+        emailGroup.querySelector('.error-msg').textContent = 'Please enter a valid email.';
+        valid = false;
+      } else { emailGroup.classList.remove('error'); }
+
+      if (password.length < 6) {
+        passGroup.classList.add('error');
+        passGroup.querySelector('.error-msg').textContent = 'Password must be at least 6 characters.';
+        valid = false;
+      } else { passGroup.classList.remove('error'); }
+
+      if (!valid) return;
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+      try {
+        const res = await fetch(api.login, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('swt_token', data.token);
+          localStorage.setItem('swt_user', JSON.stringify(data.user));
+          sucBox.textContent = 'Login successful! Redirecting...';
+          sucBox.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = data.user.role === 'admin' ? 'admin.html' : 'index.html';
+          }, 1000);
+        } else {
+          errBox.textContent = data.message;
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Login';
+        }
+      } catch {
+        errBox.textContent = 'Network error. Please check your connection.';
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Login';
+      }
+    });
+  </script>
+</body>
+</html>

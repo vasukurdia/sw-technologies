@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — SW Technologies</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .admin-wrapper { padding: 100px 0 60px; min-height: 100vh; background: var(--off-white); }
+    .admin-header { margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .admin-header h1 { font-size: 1.8rem; }
+    .admin-header h1 span { color: var(--blue); }
+    .admin-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .tab-btn {
+      padding: 9px 20px; border-radius: var(--radius); border: 1.5px solid var(--border);
+      background: var(--white); color: var(--slate-mid); font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+    }
+    .tab-btn.active, .tab-btn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .admin-table-wrap {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-card);
+    }
+    .admin-table-header {
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .admin-table-header h3 { font-size: 1rem; }
+    .count-badge {
+      background: var(--blue-soft); color: var(--blue);
+      border: 1px solid var(--blue-border); border-radius: 50px;
+      padding: 2px 12px; font-size: 0.8rem; font-weight: 700;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th { background: var(--section-alt); padding: 12px 16px; text-align: left; font-weight: 700; color: var(--slate-mid); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 12px 16px; border-top: 1px solid var(--border); color: var(--slate-mid); vertical-align: top; max-width: 200px; word-break: break-word; }
+    tr:hover td { background: var(--off-white); }
+    .delete-btn {
+      background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
+      border-radius: 6px; padding: 5px 12px; font-size: 0.8rem;
+      cursor: pointer; font-weight: 600; transition: var(--transition);
+    }
+    .delete-btn:hover { background: #dc2626; color: white; }
+    .role-badge {
+      padding: 2px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+    }
+    .role-admin { background: #fef3c7; color: #d97706; }
+    .role-user  { background: var(--blue-soft); color: var(--blue); }
+    .empty-state { padding: 3rem; text-align: center; color: var(--slate-light); }
+    .empty-state i { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; opacity: 0.4; }
+    .loading-state { padding: 2rem; text-align: center; color: var(--slate-light); }
+    .admin-access-denied {
+      text-align: center; padding: 4rem 1rem;
+    }
+    .admin-access-denied i { font-size: 3rem; color: #dc2626; display: block; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">SW<span>.</span>Technologies</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div id="navAuthLinks" class="nav-auth-links"></div>
+    <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <section class="admin-wrapper">
+    <div class="container">
+
+      <!-- Access denied state -->
+      <div id="accessDenied" class="admin-access-denied" style="display:none;">
+        <i class="fas fa-shield-halved"></i>
+        <h2>Admin Access Required</h2>
+        <p style="color:var(--slate-light);margin:0.8rem 0 1.5rem;">You must be logged in as an admin to view this page.</p>
+        <a href="login.html" class="btn btn-primary"><i class="fas fa-right-to-bracket"></i> Login as Admin</a>
+      </div>
+
+      <!-- Admin panel -->
+      <div id="adminPanel" style="display:none;">
+        <div class="admin-header">
+          <h1><i class="fas fa-shield-halved" style="color:var(--blue)"></i> Admin <span>Panel</span></h1>
+          <button class="btn btn-outline" onclick="logoutUser()" style="font-size:0.88rem;padding:10px 18px;">
+            <i class="fas fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+
+        <div class="admin-tabs">
+          <button class="tab-btn active" onclick="switchTab('contacts')"><i class="fas fa-envelope"></i> Contacts</button>
+          <button class="tab-btn" onclick="switchTab('quotes')"><i class="fas fa-file-invoice"></i> Quotes</button>
+          <button class="tab-btn" onclick="switchTab('users')"><i class="fas fa-users"></i> Users</button>
+          <button class="tab-btn" onclick="switchTab('newsletter')"><i class="fas fa-newspaper"></i> Newsletter</button>
+        </div>
+
+        <!-- CONTACTS TAB -->
+        <div id="tab-contacts" class="tab-content active">
+          <div class="admin-table-wrap">
+            <div class="admin-table-header">
+              <h3><i class="fas fa-envelope"></i> Contact Submissions</h3>
+              <span class="count-badge" id="contactCount">–</span>
+            </div>
+            <div id="contactsTable"><div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+          </div>
+        </div>
+
+        <!-- QUOTES TAB -->
+        <div id="tab-quotes" class="tab-content">
+          <div class="admin-table-wrap">
+            <div class="admin-table-header">
+              <h3><i class="fas fa-file-invoice"></i> Quote Requests</h3>
+              <span class="count-badge" id="quoteCount">–</span>
+            </div>
+            <div id="quotesTable"><div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+          </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="tab-users" class="tab-content">
+          <div class="admin-table-wrap">
+            <div class="admin-table-header">
+              <h3><i class="fas fa-users"></i> Registered Users</h3>
+              <span class="count-badge" id="userCount">–</span>
+            </div>
+            <div id="usersTable"><div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+          </div>
+        </div>
+
+        <!-- NEWSLETTER TAB -->
+        <div id="tab-newsletter" class="tab-content">
+          <div class="admin-table-wrap">
+            <div class="admin-table-header">
+              <h3><i class="fas fa-newspaper"></i> Newsletter Subscribers</h3>
+              <span class="count-badge" id="newsletterCount">–</span>
+            </div>
+            <div id="newsletterTable"><div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const token = localStorage.getItem('swt_token');
+    const user  = JSON.parse(localStorage.getItem('swt_user') || 'null');
+
+    if (!token || !user || user.role !== 'admin') {
+      document.getElementById('accessDenied').style.display = 'block';
+    } else {
+      document.getElementById('adminPanel').style.display = 'block';
+      loadContacts();
+      loadQuotes();
+      loadUsers();
+      loadNewsletter();
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${name}`).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+    function fmtDate(d) {
+      return new Date(d).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+
+    // CONTACTS
+    async function loadContacts() {
+      try {
+        const res = await fetch(api.adminContacts, { headers });
+        const data = await res.json();
+        document.getElementById('contactCount').textContent = data.count || 0;
+        if (!data.data?.length) {
+          document.getElementById('contactsTable').innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No contact submissions yet.</p></div>';
+          return;
+        }
+        document.getElementById('contactsTable').innerHTML = `
+          <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody>
+              ${data.data.map((c, i) => `
+                <tr id="contact-${c._id}">
+                  <td>${i + 1}</td>
+                  <td>${c.name}</td>
+                  <td>${c.email}</td>
+                  <td>${c.phone}</td>
+                  <td>${c.subject}</td>
+                  <td style="max-width:180px;">${c.message.substring(0, 80)}${c.message.length > 80 ? '...' : ''}</td>
+                  <td>${fmtDate(c.createdAt)}</td>
+                  <td><button class="delete-btn" onclick="deleteContact('${c._id}')"><i class="fas fa-trash"></i> Delete</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table></div>`;
+      } catch { document.getElementById('contactsTable').innerHTML = '<div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>Failed to load contacts.</p></div>'; }
+    }
+
+    async function deleteContact(id) {
+      if (!confirm('Delete this contact submission?')) return;
+      try {
+        const res = await fetch(`${api.adminContacts}/${id}`, { method: 'DELETE', headers });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`contact-${id}`)?.remove();
+          const count = document.getElementById('contactCount');
+          count.textContent = parseInt(count.textContent) - 1;
+        }
+      } catch { alert('Delete failed.'); }
+    }
+
+    // QUOTES
+    async function loadQuotes() {
+      try {
+        const res = await fetch(api.adminQuotes, { headers });
+        const data = await res.json();
+        document.getElementById('quoteCount').textContent = data.count || 0;
+        if (!data.data?.length) {
+          document.getElementById('quotesTable').innerHTML = '<div class="empty-state"><i class="fas fa-file-circle-xmark"></i><p>No quote requests yet.</p></div>';
+          return;
+        }
+        document.getElementById('quotesTable').innerHTML = `
+          <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Service</th><th>Budget</th><th>Message</th><th>Date</th></tr></thead>
+            <tbody>
+              ${data.data.map((q, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${q.name}</td>
+                  <td>${q.email}</td>
+                  <td>${q.phone}</td>
+                  <td>${q.serviceRequired}</td>
+                  <td>${q.budget}</td>
+                  <td>${q.message.substring(0, 60)}${q.message.length > 60 ? '...' : ''}</td>
+                  <td>${fmtDate(q.createdAt)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table></div>`;
+      } catch { document.getElementById('quotesTable').innerHTML = '<div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>Failed to load quotes.</p></div>'; }
+    }
+
+    // USERS
+    async function loadUsers() {
+      try {
+        const res = await fetch(api.adminUsers, { headers });
+        const data = await res.json();
+        document.getElementById('userCount').textContent = data.count || 0;
+        if (!data.data?.length) {
+          document.getElementById('usersTable').innerHTML = '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No users registered yet.</p></div>';
+          return;
+        }
+        document.getElementById('usersTable').innerHTML = `
+          <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+            <tbody>
+              ${data.data.map((u, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${u.name}</td>
+                  <td>${u.email}</td>
+                  <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+                  <td>${fmtDate(u.createdAt)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table></div>`;
+      } catch { document.getElementById('usersTable').innerHTML = '<div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>Failed to load users.</p></div>'; }
+    }
+
+    // NEWSLETTER
+    async function loadNewsletter() {
+      try {
+        const res = await fetch(api.adminNewsletter, { headers });
+        const data = await res.json();
+        document.getElementById('newsletterCount').textContent = data.count || 0;
+        if (!data.data?.length) {
+          document.getElementById('newsletterTable').innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>No subscribers yet.</p></div>';
+          return;
+        }
+        document.getElementById('newsletterTable').innerHTML = `
+          <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>#</th><th>Email</th><th>Subscribed On</th></tr></thead>
+            <tbody>
+              ${data.data.map((s, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${s.email}</td>
+                  <td>${fmtDate(s.subscribedAt)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table></div>`;
+      } catch { document.getElementById('newsletterTable').innerHTML = '<div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>Failed to load subscribers.</p></div>'; }
+    }
+  </script>
+</body>
+</html>
