@@ -18,10 +18,8 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (file://, Postman, mobile apps)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
-      // In development allow all origins
       if (process.env.NODE_ENV !== "production") return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
