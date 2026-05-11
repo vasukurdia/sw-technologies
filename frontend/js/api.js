@@ -1,6 +1,6 @@
 // Local testing ke liye: 'http://localhost:5000'
 // Render deploy ke baad: apna Render URL paste karo
-const API_BASE_URL = "https://sw-technologies.onrender.com/";
+const API_BASE_URL = 'https://sw-technologies.onrender.com/';
 
 window.api = {
   contact: `${API_BASE_URL}/api/contact`,
