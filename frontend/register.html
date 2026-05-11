@@ -1,168 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register — SW Technologies</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    .auth-section {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 100px 20px 60px;
-      background: var(--off-white);
-    }
-    .auth-card {
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 440px;
-      box-shadow: var(--shadow-lg);
-    }
-    .auth-card .auth-logo { text-align: center; margin-bottom: 1.5rem; }
-    .auth-card h2 { font-size: 1.7rem; text-align: center; margin-bottom: 0.4rem; }
-    .auth-card .auth-sub { text-align: center; color: var(--slate-light); font-size: 0.93rem; margin-bottom: 2rem; }
-    .auth-footer { text-align: center; margin-top: 1.2rem; font-size: 0.9rem; color: var(--slate-light); }
-    .auth-footer a { color: var(--blue); font-weight: 600; }
-    .auth-api-error {
-      background: #fef2f2; border: 1px solid #fecaca; color: #dc2626;
-      padding: 10px 14px; border-radius: var(--radius); font-size: 0.88rem;
-      margin-bottom: 1rem; display: none;
-    }
-    .auth-api-success {
-      background: #f0fdf4; border: 1px solid #86efac; color: #16a34a;
-      padding: 10px 14px; border-radius: var(--radius); font-size: 0.88rem;
-      margin-bottom: 1rem; display: none;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register — SW Technologies</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .auth-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+            background: var(--off-white);
+        }
+
+        .auth-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-card .auth-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-card h2 {
+            font-size: 1.7rem;
+            text-align: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .auth-card .auth-sub {
+            text-align: center;
+            color: var(--slate-light);
+            font-size: 0.93rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+            color: var(--slate-light);
+        }
+
+        .auth-footer a {
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .auth-api-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .auth-api-success {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #16a34a;
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
 
-  <nav class="navbar">
-    <a href="index.html" class="nav-logo">SW<span>.</span>Technologies</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <div id="navAuthLinks" class="nav-auth-links"></div>
-    <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
-  </nav>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">SW<span>.</span>Technologies</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div id="navAuthLinks" class="nav-auth-links"></div>
+        <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </nav>
 
-  <div class="mobile-nav">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="services.html">Services</a>
-    <a href="contact.html">Contact</a>
-  </div>
-
-  <section class="auth-section">
-    <div class="auth-card">
-      <div class="auth-logo">
-        <a href="index.html" class="nav-logo" style="font-size:1.6rem;">SW<span>.</span>Technologies</a>
-      </div>
-      <h2>Create Account</h2>
-      <p class="auth-sub">Join SW Technologies today</p>
-
-      <div id="apiError" class="auth-api-error"></div>
-      <div id="apiSuccess" class="auth-api-success"></div>
-
-      <form id="registerForm" novalidate>
-        <div class="form-group">
-          <label for="name">Full Name <span style="color:#ef4444">*</span></label>
-          <input type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="name" />
-          <span class="error-msg"></span>
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address <span style="color:#ef4444">*</span></label>
-          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
-          <span class="error-msg"></span>
-        </div>
-        <div class="form-group">
-          <label for="password">Password <span style="color:#ef4444">*</span></label>
-          <input type="password" id="password" placeholder="Min 6 characters" autocomplete="new-password" />
-          <span class="error-msg"></span>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;">
-          <i class="fas fa-user-plus"></i> Create Account
-        </button>
-      </form>
-
-      <p class="auth-footer">Already have an account? <a href="login.html">Login here</a></p>
+    <div class="mobile-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
     </div>
-  </section>
 
-  <script src="js/api.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    if (localStorage.getItem('swt_token')) window.location.href = 'index.html';
+    <section class="auth-section">
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p class="auth-sub">Join SW Technologies today</p>
 
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const errBox = document.getElementById('apiError');
-      const sucBox = document.getElementById('apiSuccess');
-      errBox.style.display = 'none';
-      sucBox.style.display = 'none';
+            <div id="apiError" class="auth-api-error"></div>
+            <div id="apiSuccess" class="auth-api-success"></div>
 
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+            <form id="registerForm" novalidate>
+                <div class="form-group">
+                    <label for="name">Full Name <span style="color:#ef4444">*</span></label>
+                    <input type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="name" />
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address <span style="color:#ef4444">*</span></label>
+                    <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password <span style="color:#ef4444">*</span></label>
+                    <input type="password" id="password" placeholder="Min 6 characters" autocomplete="new-password" />
+                    <span class="error-msg"></span>
+                </div>
+                <button type="submit" class="btn btn-primary"
+                    style="width:100%;justify-content:center;margin-top:0.5rem;">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
 
-      let valid = true;
-      const checks = [
-        { id: 'name',     rule: name.length >= 2,                             msg: 'Name must be at least 2 characters.' },
-        { id: 'email',    rule: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),    msg: 'Please enter a valid email.' },
-        { id: 'password', rule: password.length >= 6,                         msg: 'Password must be at least 6 characters.' },
-      ];
+            <p class="auth-footer">Already have an account? <a href="login.html">Login here</a></p>
+        </div>
+    </section>
 
-      checks.forEach(({ id, rule, msg }) => {
-        const group = document.getElementById(id).closest('.form-group');
-        if (!rule) {
-          group.classList.add('error');
-          group.querySelector('.error-msg').textContent = msg;
-          valid = false;
-        } else { group.classList.remove('error'); }
-      });
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        if (localStorage.getItem('swt_token')) window.location.href = 'index.html';
 
-      if (!valid) return;
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errBox = document.getElementById('apiError');
+            const sucBox = document.getElementById('apiSuccess');
+            errBox.style.display = 'none';
+            sucBox.style.display = 'none';
 
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-      try {
-        const res = await fetch(api.register, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password })
+            let valid = true;
+            const checks = [
+                { id: 'name', rule: name.length >= 2, msg: 'Name must be at least 2 characters.' },
+                { id: 'email', rule: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), msg: 'Please enter a valid email.' },
+                { id: 'password', rule: password.length >= 6, msg: 'Password must be at least 6 characters.' },
+            ];
+
+            checks.forEach(({ id, rule, msg }) => {
+                const group = document.getElementById(id).closest('.form-group');
+                if (!rule) {
+                    group.classList.add('error');
+                    group.querySelector('.error-msg').textContent = msg;
+                    valid = false;
+                } else { group.classList.remove('error'); }
+            });
+
+            if (!valid) return;
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+            try {
+                const res = await fetch(window.api.register, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('swt_token', data.token);
+                    localStorage.setItem('swt_user', JSON.stringify(data.user));
+                    sucBox.textContent = 'Account created! Redirecting...';
+                    sucBox.style.display = 'block';
+                    setTimeout(() => window.location.href = 'index.html', 1200);
+                } else {
+                    errBox.textContent = data.message;
+                    errBox.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                }
+            } catch {
+                errBox.textContent = 'Network error. Please check your connection.';
+                errBox.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
         });
-        const data = await res.json();
-
-        if (data.success) {
-          localStorage.setItem('swt_token', data.token);
-          localStorage.setItem('swt_user', JSON.stringify(data.user));
-          sucBox.textContent = 'Account created! Redirecting...';
-          sucBox.style.display = 'block';
-          setTimeout(() => window.location.href = 'index.html', 1200);
-        } else {
-          errBox.textContent = data.message;
-          errBox.style.display = 'block';
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-        }
-      } catch {
-        errBox.textContent = 'Network error. Please check your connection.';
-        errBox.style.display = 'block';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-      }
-    });
-  </script>
+    </script>
 </body>
+
 </html>
